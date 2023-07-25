@@ -52,9 +52,8 @@ def db_check(db_pks,db_table):
     Checks database for data.
     Useful for inserts
     """
-    cur_item = session.query(db_table).filter_by(**db_pks).first()
+    cur_item = db_table.query.filter_by(**db_pks).first()
     return cur_item
-
 
 
 def db_insert(db_data, db_table):
@@ -79,6 +78,15 @@ def db_insert(db_data, db_table):
             session.commit()
         except:
             pass
+def db_merge(db_obj):
+    session.merge(db_obj)
+    session.commit()
+
+def db_update(db_field,db_value,db_where,db_is,db_table):
+    kvalues = {db_field: db_value}
+    db_up = db_table.__table__.update().values(**kvalues).where(db_where == db_is)
+    session.execute(db_up)
+    session.commit()
 
 
 def db_upsert(db_data, db_table):
@@ -100,6 +108,10 @@ def db_upsert(db_data, db_table):
     for dbr in upserts:
         session.merge(dbr)
     session.commit()
+
+def db_commit():
+    session.commit()
+
 
 ## Table Classes definitions
 

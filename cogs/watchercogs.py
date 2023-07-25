@@ -4,15 +4,22 @@ from datetime import datetime, timezone
 from discord.ext.commands import Context, command
 from discord.ext import commands
 
-from dbloader import db_upsert,db_check,db_insert,disHist
+from dbloader import db_upsert,db_check,db_insert,db_commit,db_merge,db_update,disHist,disConf
 
 class WatchCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.gconfigs = {}
 
     @commands.Cog.listener()
     async def on_ready(self):
         for guild in self.bot.guilds:
+            gpk = {'srvid':str(guild.id)}
+            if not db_check(gpk,disConf):
+                gpk["cjson"] = {"initialized":True}
+                db_insert([gpk],disConf)
+            gpc = db_check(gpk,disConf)
+            self.gconfigs[str(guild.id)] = gpc.cjson
             memberlist = []
             for member in [ x for x in guild.members if not x.bot ]:
                 new_hist = {
@@ -25,11 +32,16 @@ class WatchCog(commands.Cog):
                 pk = {'srvid':new_hist["srvid"],'did':new_hist["did"]}
                 if not db_check(pk,disHist):
                    memberlist.append(dict(new_hist))
+                   print(f"adding user - {guild.name} - {member.name}")
             db_insert(memberlist,disHist)
 
     @commands.Cog.listener()
     async def on_guild_join(self,guildo):
         print('We have joined a new guild ' + guildo.name )
+        gpk = {'srvid':str(guildo.id)}
+        if not db_check(gpk,disConf):
+            gpk["cjson"] = {}
+            db_insert([gpk],disConf)
         for member in [ x for x in guildo.members if not x.bot ]:
             new_hist = {
              'srvid': str(member.guild.id),
@@ -38,6 +50,7 @@ class WatchCog(commands.Cog):
              'dlast': datetime.now(timezone.utc),
              'dmsg': str("New Server")
             }
+            print(f"adding user - {member.guild.name} - {member.name}")
             db_upsert([new_hist],disHist)
 
     @commands.Cog.listener()
@@ -124,6 +137,14 @@ class WatchCog(commands.Cog):
     @command(name="test", description='Test command')
     async def test_comm_string(self, ctx):
         await ctx.send(ctx.message.content)
+
+    @command(name="voidrole", description='Role for void')
+    async def test_comm_string(self, ctx):
+        voidrole = ctx.message.role_mentions[0]
+        voidupdate = {"voidrole":str(voidrole.id)}
+        self.gconfigs[str(ctx.guild.id)].update(voidupdate)
+        db_update(db_field = 'cjson', db_value = self.gconfigs[str(ctx.guild.id)], db_where = disConf.srvid, db_is = str(ctx.guild.id), db_table = disConf)
+        await ctx.send('Set void role to ' + str(voidrole.name))
 
     @command(name="ask", description='ask the bot a question')
     async def askbot(self, ctx):
