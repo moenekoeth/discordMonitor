@@ -7,7 +7,12 @@
       "port": 0,
       "name": "dbname"
     },
+    "command_prefix":"!",
     "keys":{
       "discord":""
+    },
+    "tables":{
+        "distHist":"hist",
+        "distConf":"dconfig"
     }
   }

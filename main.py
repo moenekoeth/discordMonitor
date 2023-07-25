@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 from os import listdir,environ
 from dbloader import load_config
-from cogs.homucogs import HomuCog
 config_loc = environ.get("HOMU_CONFIG_PATH","./config/config.json")
 bot_config = load_config(config_loc)
 INTENTS = discord.Intents.all()

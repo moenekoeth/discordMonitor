@@ -70,6 +70,7 @@ def db_upsert(db_data, db_table):
 
 class disHist(base):
     __tablename__ = "hist"
+    __tablename__ = inner_config["tables"]["distHist"]
     srvid = sa.Column("srvid", sa.String)
     duser = sa.Column("duser",sa.String)
     did = sa.Column("did",sa.String)
@@ -80,7 +81,7 @@ class disHist(base):
     )
 
 class distConf(base):
-    __tablename__ = "dconfig"
+    __tablename__ = inner_config["tables"]["distConf"]
     srvid = sa.Column("srvid", sa.String, primary_key=True)
     cjson = sa.Column("cjson", sa.JSON)
 
