@@ -90,8 +90,12 @@ def db_update(db_value_data,db_where,db_is,db_table):
     ===========
     db_field : str
         field to update,
-    db_data : list[dicts]
-        contains a list of the dictionaries to insert.
+    db_value_data : dict
+        dictionary of fields to update, field : value
+    db_where : sa.Table.column
+        Where Column to check
+    db_is : any
+        Value of Where look up
     db_table : sqlalchemy Table Class
         Table Class that will be upserted into
     """

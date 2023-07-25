@@ -139,7 +139,7 @@ class WatchCog(commands.Cog):
         await ctx.send(ctx.message.content)
 
     @command(name="voidrole", description='Role for void')
-    async def test_comm_string(self, ctx):
+    async def voidrole_add(self, ctx):
         try:
             voidrole = ctx.message.role_mentions[0]
         except Exception as e:
@@ -154,6 +154,11 @@ class WatchCog(commands.Cog):
             await ctx.send('Set void role to ' + str(voidrole.name))
         else:
             await ctx.send('Only admins can run this command')
+
+    @command(name="config", description='Get config for server')
+    async def config_get(self, ctx):
+        await ctx.send(json.dumps(self.gconfigs[str(ctx.guild.id)]))
+
 
     @command(name="ask", description='ask the bot a question')
     async def askbot(self, ctx):
