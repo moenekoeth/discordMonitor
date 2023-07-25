@@ -82,9 +82,20 @@ def db_merge(db_obj):
     session.merge(db_obj)
     session.commit()
 
-def db_update(db_field,db_value,db_where,db_is,db_table):
-    kvalues = {db_field: db_value}
-    db_up = db_table.__table__.update().values(**kvalues).where(db_where == db_is)
+def db_update(db_value_data,db_where,db_is,db_table):
+    """
+    Upserts data into database directly.
+
+    Paramaters:
+    ===========
+    db_field : str
+        field to update,
+    db_data : list[dicts]
+        contains a list of the dictionaries to insert.
+    db_table : sqlalchemy Table Class
+        Table Class that will be upserted into
+    """
+    db_up = db_table.__table__.update().values(**db_value_data).where(db_where == db_is)
     session.execute(db_up)
     session.commit()
 

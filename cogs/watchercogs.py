@@ -140,11 +140,20 @@ class WatchCog(commands.Cog):
 
     @command(name="voidrole", description='Role for void')
     async def test_comm_string(self, ctx):
-        voidrole = ctx.message.role_mentions[0]
-        voidupdate = {"voidrole":str(voidrole.id)}
-        self.gconfigs[str(ctx.guild.id)].update(voidupdate)
-        db_update(db_field = 'cjson', db_value = self.gconfigs[str(ctx.guild.id)], db_where = disConf.srvid, db_is = str(ctx.guild.id), db_table = disConf)
-        await ctx.send('Set void role to ' + str(voidrole.name))
+        try:
+            voidrole = ctx.message.role_mentions[0]
+        except Exception as e:
+            print("Error on voidrole command: " + str(e))
+            await ctx.send("Must @ Role in command")
+            return None
+        if ctx.author.guild_permissions.administrator:
+            voidupdate = {"voidrole":str(voidrole.id)}
+            self.gconfigs[str(ctx.guild.id)].update(voidupdate)
+            db_insert_values = {'cjson': self.gconfigs[str(ctx.guild.id)]}
+            db_update(db_value_data=db_insert_values, db_where = disConf.srvid, db_is = str(ctx.guild.id), db_table = disConf)
+            await ctx.send('Set void role to ' + str(voidrole.name))
+        else:
+            await ctx.send('Only admins can run this command')
 
     @command(name="ask", description='ask the bot a question')
     async def askbot(self, ctx):
