@@ -1,0 +1,13 @@
+{
+    "db": {
+      "engine": "sqlite",
+      "user": "",
+      "password": "",
+      "host": "",
+      "port": 0,
+      "name": "dbname"
+    },
+    "keys":{
+      "discord":""
+    }
+  }

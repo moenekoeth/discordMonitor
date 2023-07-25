@@ -1,0 +1,4 @@
+*__pycache__*
+config/config.json
+config/db.sqlite3
+venv/*
