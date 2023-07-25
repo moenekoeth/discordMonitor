@@ -46,6 +46,41 @@ try:
 except Exception as e:
     print("Unable to connect to database - " + str(e))
 
+
+def db_check(db_pks,db_table):
+    """
+    Checks database for data.
+    Useful for inserts
+    """
+    cur_item = session.query(db_table).filter_by(**db_pks).first()
+    return cur_item
+
+
+
+def db_insert(db_data, db_table):
+    """
+    Insert data into database, preps it into a list of inserts first,
+     then merges it with the data in the table.
+
+    Paramaters:
+    ===========
+    db_data : list[dicts]
+        contains a list of the dictionaries to insert.
+    db_table : sqlalchemy Table Class
+        Table Class that will be upserted into
+    """
+
+    inserts = []
+    for dbd in db_data:
+        inserts.append(db_table(**dbd))
+    for dbr in inserts:
+        try:
+            session.add(dbr)
+            session.commit()
+        except:
+            pass
+
+
 def db_upsert(db_data, db_table):
     """
     Upserts data into database, preps it into a list of inserts first,
@@ -70,7 +105,7 @@ def db_upsert(db_data, db_table):
 
 class disHist(base):
     __tablename__ = "hist"
-    __tablename__ = inner_config["tables"]["distHist"]
+    __tablename__ = inner_config["tables"]["disHist"]
     srvid = sa.Column("srvid", sa.String)
     duser = sa.Column("duser",sa.String)
     did = sa.Column("did",sa.String)
@@ -80,8 +115,8 @@ class disHist(base):
         sa.PrimaryKeyConstraint(srvid,did),{},
     )
 
-class distConf(base):
-    __tablename__ = inner_config["tables"]["distConf"]
+class disConf(base):
+    __tablename__ = inner_config["tables"]["disConf"]
     srvid = sa.Column("srvid", sa.String, primary_key=True)
     cjson = sa.Column("cjson", sa.JSON)
 

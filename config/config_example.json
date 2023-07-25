@@ -12,7 +12,7 @@
       "discord":""
     },
     "tables":{
-        "distHist":"hist",
-        "distConf":"dconfig"
+        "disHist":"hist",
+        "disConf":"dconfig"
     }
   }
